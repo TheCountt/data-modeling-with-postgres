@@ -1,0 +1,83 @@
+# -------------------------
+# Python bytecode
+# -------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+
+# -------------------------
+# Virtual environments
+# -------------------------
+.env
+.venv
+env/
+venv/
+ENV/
+
+# -------------------------
+# Distribution / packaging
+# -------------------------
+build/
+dist/
+develop-eggs/
+eggs/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# -------------------------
+# PyInstaller
+# -------------------------
+*.manifest
+*.spec
+
+# -------------------------
+# Unit test / coverage
+# -------------------------
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.pytest_cache/
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# -------------------------
+# Logs
+# -------------------------
+*.log
+
+# -------------------------
+# IDE / Editors
+# -------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# -------------------------
+# OS files
+# -------------------------
+.DS_Store
+Thumbs.db
+
+# -------------------------
+# Jupyter
+# -------------------------
+.ipynb_checkpoints/
+
+# -------------------------
+# dotenv / secrets
+# -------------------------
+.env.*
+!.env.example
+
+# -------------------------
+# FastAPI / Django extras
+# -------------------------
+instance/
+*.sqlite3
+db.sqlite3
