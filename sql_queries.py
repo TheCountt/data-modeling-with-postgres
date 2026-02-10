@@ -50,10 +50,10 @@ CREATE TABLE IF NOT EXISTS songs (
 artist_table_create = ("""
 CREATE TABLE IF NOT EXISTS artists (
     artist_id TEXT PRIMARY KEY,
-    name TEXT,
-    location TEXT,
-    latitude REAL,
-    longitude REAL
+    artist_name TEXT,
+    artist_location TEXT,
+    artist_latitude REAL,
+    artist_longitude REAL
 );
 """)
 
@@ -64,7 +64,7 @@ time_table_create = ("""CREATE TABLE IF NOT EXISTS  time(
 	week INT NOT NULL CHECK (week >= 0),
 	month INT NOT NULL CHECK (month >= 0),
 	year INT NOT NULL CHECK (year >= 0),
-	weekday VARCHAR NOT NULL
+	day_name VARCHAR NOT NULL
 )""")
 
 # INSERT RECORDS
@@ -94,16 +94,16 @@ ON CONFLICT(song_id) DO NOTHING;
 
 # Artist location, latitude and longitude might change and need to be updated.
 artist_table_insert = ("""
-INSERT INTO artists (artist_id, name, location, latitude, longitude)
+INSERT INTO artists (artist_id, artist_name, artist_location, artist_latitude, artist_longitude)
 VALUES (?, ?, ?, ?, ?)
 ON CONFLICT(artist_id) DO UPDATE SET
-    location = excluded.location,
-    latitude = excluded.latitude,
-    longitude = excluded.longitude;
+    artist_location = excluded.artist_location,
+    artist_latitude = excluded.artist_latitude,
+    artist_longitude = excluded.artist_longitude;
 """)
 
 time_table_insert = ("""
-INSERT INTO time (start_time, hour, day, week, month, year, weekday)
+INSERT INTO time (start_time, hour, day, week, month, year, day_name)
 VALUES (?, ?, ?, ?, ?, ?, ?)
 ON CONFLICT(start_time) DO NOTHING;
 """)
@@ -115,7 +115,7 @@ SELECT songs.song_id, artists.artist_id
 FROM songs
 JOIN artists ON songs.artist_id = artists.artist_id
 WHERE songs.title = ?
-  AND artists.name = ?
+  AND artists.artist_name = ?
   AND songs.duration = ?;
 """)
 

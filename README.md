@@ -90,3 +90,111 @@ python etl.py
 
 [Pandas Documentation](https://pandas.pydata.org/pandas-docs/stable/)
 
+
+
+## Flow:
+
+### Modeling - Star schema
+
+### Database Creation
+
+### etl workflow
+
+```
+1. Start Program
+   ↓
+2. Connect to Database (open the library)
+   ↓
+3. Process ALL Song Files (add all music to library)
+   • Read each JSON file
+   • Extract artist + song info
+   • Save to database
+   ↓
+4. Process ALL Log Files (record all listening activity)
+   • Read each JSON file
+   • Extract time, user, songplay info
+   • Save to database
+   ↓
+5. Close Database (lock the library)
+   ↓
+6. Done!
+```
+
+# The Hybrid Solution in Our Schema: "Fact Table as History"
+
+If Type 1 SCD, historical context is irrevocably lost.
+
+```
+The Problem with Using Only a Type 1 users.level
+Let's trace the problem through our music app scenario:
+
+Day 1-30: User Walter (id 39) is on a free tier. He listens to 100 songs.
+
+Day 31: Walter upgrades his account to paid.
+
+ETL Process: Our pipeline runs and updates the users table. Walter's level is now 'paid'. His previous 'free' level is gone.
+
+Day 31-60: As a paid user, he listens to 500 songs.
+
+Now, an analyst runs a query to "Compare the average number of songs played per session for free vs. paid users."
+
+The songplays fact table has 600 records for Walter: 100 from his free days and 500 from his paid days.
+
+But when we join songplays to the users table to get his level, all 600 records will be tagged as 'paid' because that is his current level in the dimension.
+
+We have irrevocably lost the historical context. We can no longer distinguish his free-tier behavior from his paid-tier behavior.
+
+```
+
+Our proposed schema provides an elegant solution to this problem by using a hybrid approach.
+
+1. users Table (Type 1 SCD):
+
+Purpose: To hold the current, up-to-date state of the user.
+
+level here answers: "What is this user's subscription level right now?"
+
+2. songplays Fact Table (Captures Historical State):
+
+Purpose: To record the state of the world at the time of the event.
+
+level here answers: "What was this user's subscription level at the exact moment they played this song?"
+
+How it works in the ETL Process:
+
+When processing a log event for a song play, the ETL pipeline looks at the log record.
+
+It takes the level value directly from that log file and writes it into the songplays.level column.
+
+Separately, it updates the users.level column with the latest value.
+
+Let's revisit our example with this hybrid design:
+
+The songplays Fact Table (Snippet):
+
+songplay_id	start_time	user_id	level	...
+507	2023-01-15 10:01:00	39	free	...
+508	2023-01-15 10:05:12	39	free	...
+...	...	...	...	...
+12081	2023-02-05 19:22:45	39	paid	...
+12082	2023-02-05 19:30:10	39	paid	...
+The users Dimension Table:
+
+user_id	first_name	last_name	level
+39	Walter	Frye	paid
+Now, when the analyst runs the query:
+
+They ignore the users.level for this historical analysis.
+
+They group by songplays.level.
+
+The result will correctly show 100 song plays with level = 'free' and 500 song plays with level = 'paid'.
+
+Conclusion: Why This is a "Type 1 SCD Effect"
+By storing the mutable level attribute in the fact table, we are not following a pure SCD type. Instead, we are bypassing the problem that SCDs are designed to solve.
+
+A pure Type 1 SCD in the users table loses history.
+
+A Type 2 SCD (which adds new rows with effective dates) in the users table would be more complex.
+
+Our hybrid approach is a pragmatic and highly effective solution for this specific use case. It effectively "freezes" the state of the user at the time of the event, providing perfect historical context for analysis without needing complex SCD logic in the users dimension for this particular attribute.

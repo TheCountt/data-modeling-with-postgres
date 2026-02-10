@@ -1,4 +1,4 @@
-import mysqlite3
+import sqlite3
 from sql_queries import create_table_queries, drop_table_queries
 
 
@@ -9,7 +9,7 @@ def create_database():
     :return: return's (cur, conn) a cursor and connection reference
     """
     # Connect to SQLite database (creates the file if it doesn't exist)
-    conn = mysqlite3.connect('sparkifydb.sqlite')
+    conn = sqlite3.connect('sparkifydb.sqlite')
     cur = conn.cursor()
     
     return cur, conn
@@ -17,7 +17,7 @@ def create_database():
 
 def drop_tables(cur, conn):
     """
-    Run's all the drop table queries defined in sql_queries.py
+    Runs all the drop table queries defined in sql_queries.py
     :param cur: cursor to the database
     :param conn: database connection reference
     """

@@ -81,3 +81,4 @@ Thumbs.db
 instance/
 *.sqlite3
 db.sqlite3
+*.sqlite
