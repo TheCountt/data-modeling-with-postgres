@@ -41,15 +41,15 @@ def main():
     """
     Driver main function.
     """
-    cur, conn = create_database()
+    x, y = create_database()
     
-    drop_tables(cur, conn)
+    drop_tables(x, y)
     print("Table dropped successfully!!")
 
-    create_tables(cur, conn)
+    create_tables(x, y)
     print("Table created successfully!!")
 
-    conn.close()
+    y.close()
 
 
 if __name__ == "__main__":
