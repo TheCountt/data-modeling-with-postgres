@@ -223,3 +223,9 @@ A pure ***Type 1 SCD*** in the users table loses history.
 A ***Type 2 SCD*** (which adds new rows with effective dates) in the users table would be more complex.
 
 Our hybrid approach is a pragmatic and highly effective solution for this specific use case. It effectively "freezes" the state of the user at the time of the event, providing perfect historical context for analysis without needing complex SCD logic in the users dimension for this particular attribute.
+
+
+graph TD;
+    A[Start] --> B{Is it awesome?};
+    B -- Yes --> C[Great!];
+    B -- No --> D[Try again];
